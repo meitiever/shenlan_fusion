@@ -37,6 +37,7 @@ namespace lidar_localization {
       private:
         pcl::IterativeClosestPoint<CloudData::POINT, CloudData::POINT>::Ptr icp_ptr_;
         Eigen::Vector3d ux, uy;
+        Eigen::MatrixXd H;
     };
 }
 

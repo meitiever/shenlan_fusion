@@ -7,6 +7,9 @@
 
 #include "glog/logging.h"
 
+using namespace std;
+using namespace Eigen;
+
 namespace lidar_localization {
 
     SVDRegistration::SVDRegistration(const YAML::Node &node)
@@ -68,8 +71,24 @@ namespace lidar_localization {
                                     const Eigen::Matrix4f &predict_pose,
                                     CloudData::CLOUD_PTR &result_cloud_ptr,
                                     Eigen::Matrix4f &result_pose) {
-        uy << 0, 0, 0;
+        double sum_x, sum_y, sum_z;
 
+        for(auto p : input_source->points) {
+            sum_x += p.x;
+            sum_y += p.y;
+            sum_z += p.z;
+        }
+
+        uy << sum_x / input_source->points.size(), sum_y / input_source->points.size(), sum_z / input_source->points.size();
+
+        // LOG(INFO) << "Here is the matrix H:" << std::endl << H << std::endl;
+        // JacobiSVD<MatrixXf> svd(H, ComputeThinU | ComputeThinV);
+        // LOG(INFO) << "Its singular values are:" << std::endl << svd.singularValues() << std::endl;
+        // LOG(INFO) << "Its left singular vectors are the columns of the thin U matrix:" << std::endl << svd.matrixU() << std::endl;
+        // LOG(INFO) << "Its right singular vectors are the columns of the thin V matrix:" << std::endl << svd.matrixV() << std::endl;
+        // Eigen::Matrix3d rot = svd.matrixV() * svd.matrixU().transpose();
+        // LOG(INFO) << "Now consider this rhs vector:" << std::endl << rot << std::endl;
+        // Eigen::Vector3d t = ux - rot * uy;
         return true;
     }
 
